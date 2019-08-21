@@ -64,4 +64,50 @@ public interface RetrofitService {
     @FormUrlEncoded
     @POST("UPPatrolEvent")
     Observable<String> upRequisitionInfo(@Field("jsonText") String jsonText);
+
+
+
+    /**
+     * 洞庭湖
+     */
+    // 登录
+    @GET("UserLogin")
+    Observable<String> userLogin(@Query("username") String username, @Query("password") String password);
+
+    // 更新设备信息
+    @GET("AddDeviceInfo")
+    Observable<String> addDeviceInfo(@Query("username") String username, @Query("tel") String tel, @Query("dz") String dz, @Query("sbmc") String sbmc, @Query("sbh") String sbh);
+
+    /*上传现场信息*/
+    @FormUrlEncoded
+    @POST("UPPatrolEvent")
+    Observable<String> upPatrolInfo(@Field("jsonText") String jsonText);
+
+    // 添加监测点
+    @GET("AddMonitoring")
+    Observable<String> addMonitorPoint(@Query("name") String name, @Query("bhq") String bhq, @Query("detail") String detail, @Query("jd") double jd, @Query("wd") double wd, @Query("userID") int userID);
+
+    // 查询监测点信息
+    @GET("queryMonitoring")
+    Observable<String> queryMonitoring(@Query("str") String str);
+
+    // 查询调查组信息
+    @GET("queryGroup")
+    Observable<String> queryGroup(@Query("str") String str, @Query("year") String year);
+
+    // 查询鸟类信息
+    @GET("queryBird")
+    Observable<String> queryBird(@Query("str") String str);
+
+    // 创建监测点
+    @GET("EditMonitor")
+    Observable<String> addMonitor(@Query("jsonstr") String jsonstr);
+
+    // 创建调查组
+    @GET("EditGroup")
+    Observable<String> addGroup(@Query("jsonstr") String jsonstr);
+
+    // 监测事件
+    @GET("EditEvent")
+    Observable<String> editEvent(@Query("jsonstr") String jsonstr);
 }

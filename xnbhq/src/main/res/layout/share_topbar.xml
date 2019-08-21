@@ -103,7 +103,7 @@
 
         <TextView
             android:id="@+id/share_sbsj"
-            style="@style/topbar_style_l"
+            style="@style/topbar_style"
             android:text="@string/shijianshangbao"
             android:drawableTop="@drawable/share_shangbaoshijian"/>
 
@@ -119,6 +119,12 @@
             style="@style/topbar_style"
             android:text="@string/xinjiantuceng"
             android:visibility="gone"
+            android:drawableTop="@drawable/add_newlayer" />
+
+        <TextView
+            android:id="@+id/tv_monitor"
+            style="@style/topbar_style"
+            android:text="监测调查"
             android:drawableTop="@drawable/add_newlayer" />
 
     </LinearLayout>

@@ -50,7 +50,7 @@
         android:name=".MyApplication"
         android:allowBackup="true"
         android:hardwareAccelerated="false"
-        android:icon="@drawable/app_logo"
+        android:icon="@drawable/logo_dth"
         android:label="@string/app_name"
         android:largeHeap="true"
         android:theme="@style/myAppTheme">
@@ -61,9 +61,9 @@
             android:value="vrn5PmTl38mk3Gux8nDrBf32" />
 
         <activity
-            android:name=".activity.YzlActivity"
-            android:label="@string/app_name"
-            android:configChanges="orientation|screenSize">
+            android:name=".activity.SplashActivity"
+            android:configChanges="orientation|screenSize"
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -185,11 +185,12 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/provider_paths"/>
+                android:resource="@xml/provider_paths" />
         </provider>
 
-        <activity android:name=".activity.ImageBrowseActivity"/>
-
+        <activity android:name=".activity.ImageBrowseActivity" />
+        <activity android:name=".activity.LoginActivity" />
+        <activity android:name=".activity.YzlActivity" />
     </application>
 
 </manifest>

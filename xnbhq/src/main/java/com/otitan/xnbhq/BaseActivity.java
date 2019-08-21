@@ -57,7 +57,7 @@ import com.esri.android.map.LocationDisplayManager;
 import com.esri.android.map.MapOnTouchListener;
 import com.esri.android.map.MapView;
 import com.esri.android.map.TiledLayer;
-import com.esri.android.map.ags.ArcGISLocalTiledLayer;
+import com.esri.android.map.ags.ArcGISTiledMapServiceLayer;
 import com.esri.android.map.event.OnStatusChangedListener;
 import com.esri.android.map.event.OnZoomListener;
 import com.esri.android.runtime.ArcGISRuntime;
@@ -92,7 +92,6 @@ import com.esri.core.tasks.na.RouteTask;
 import com.esri.core.tasks.na.StopGraphic;
 import com.esri.core.tasks.query.Order;
 import com.esri.core.tasks.query.QueryParameters;
-import com.github.abel533.echarts.Geo;
 import com.lling.photopicker.PhotoPickerActivity;
 import com.otitan.xnbhq.adapter.FeatureArraysAdapter;
 import com.otitan.xnbhq.adapter.FeatureResultAdapter;
@@ -105,14 +104,17 @@ import com.otitan.xnbhq.dialog.CoordinateDialog;
 import com.otitan.xnbhq.dialog.EditPhotoDialog;
 import com.otitan.xnbhq.dialog.FeatureDelDialog;
 import com.otitan.xnbhq.dialog.GpsSetDialog;
+import com.otitan.xnbhq.dialog.GroupDialog;
 import com.otitan.xnbhq.dialog.JjxxsbDialog;
 import com.otitan.xnbhq.dialog.LayerSelectDialog;
 import com.otitan.xnbhq.dialog.MergeFeatureDialog;
+import com.otitan.xnbhq.dialog.MonitorDialog;
 import com.otitan.xnbhq.dialog.RenderSetDialog;
 import com.otitan.xnbhq.dialog.ResultAreaDialog;
 import com.otitan.xnbhq.dialog.SettingDialog;
 import com.otitan.xnbhq.dialog.ShouCangDialog;
 import com.otitan.xnbhq.dialog.SpaceStatisticsDialog;
+import com.otitan.xnbhq.dialog.SurveyDialog;
 import com.otitan.xnbhq.dialog.UnreportedDialog;
 import com.otitan.xnbhq.dialog.UpdataMobileInfoDialog;
 import com.otitan.xnbhq.drawTool.DrawEvent;
@@ -179,6 +181,10 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
 
 
     public ArrayList<String> picList = new ArrayList<>();
+    public ArrayList<String> picListArea = new ArrayList<>();
+    public ArrayList<String> picListEmp = new ArrayList<>();
+    private SurveyDialog surveyDialog;
+
     public JjxxsbDialog getJjxxsbDialog() {
         return jjxxsbDialog;
     }
@@ -225,7 +231,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
     /* 当前位置点 */
     public static Point currentPoint = new Point(0, 0);
     /*当前位置gps点*/
-    public Point gpspoint = new Point(0,0);
+    public static Point gpspoint = new Point(0,0);
     /* 导航终点*/
     private Point navstopoint = new Point(0, 0);
     /* 自动定位绘制误差圆及中心点 */
@@ -328,6 +334,8 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
     private static final int ALBUM = 0x000002;
     public static final int TAKE_PHOTO = 0x000001;
     public static final int PICK_PHOTO = 0x000003;
+    public static final int PICK_PHOTO_AREA = 0x000004;
+    public static final int PICK_PHOTO_EMP = 0x000005;
     private String mCurrentPhotoPath = "";// 图片路径
     public static Point touchpoint;
     /*GPS位置监听 */
@@ -375,6 +383,9 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
             Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.ACCESS_NETWORK_STATE,
             Manifest.permission.ACCESS_WIFI_STATE,
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.CAMERA,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
     };
 
     @Override
@@ -477,6 +488,9 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
         /*新建图层*/
         TextView addlayer = (TextView) childview.findViewById(R.id.top_addnewlayer);
         addlayer.setOnClickListener(this);
+        /*监测调查*/
+        View tv_monitor = childview.findViewById(R.id.tv_monitor);
+        tv_monitor.setOnClickListener(this);
         /**========================================================================*/
         /*图层控制按钮*/
         TextView tckzImgView = (TextView) childview.findViewById(R.id.tckz_imageview);
@@ -550,7 +564,12 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
         String titlePath = MyApplication.resourcesManager.getTitlePath();
         tiledLayer = basePresenter.addTitleLayer("vector");
         /**/
-        mapView.setMaxExtent(extent);
+        //mapView.setMaxExtent(extent);
+
+        String path = "http://119.39.124.66:6080/arcgis/rest/services/DTH/DTH_YXNOTE/MapServer";
+        ArcGISTiledMapServiceLayer titleLayer = new ArcGISTiledMapServiceLayer(path);
+        mapView.addLayer(titleLayer);
+
 		/* 地形图 */
 //        String dxtLayerPath = MyApplication.resourcesManager.getLayerPath();
 //        dxtTiledLayer = basePresenter.addTitleLayer(dxtLayerPath);
@@ -1010,6 +1029,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
             currentPoint = getGPSpoint(location);
             //currentPoint = new Point(667279.435, 2956758.767);
 
+            gpsCollectPresenter.addGjdateTodb(currentPoint);
             if (gps_start_flag && currentPoint != null && currentPoint.isValid()) {
                 if (gpsCollectPresenter.collection_type == 0) {
                     if (gps_stop_flag) {
@@ -1563,6 +1583,33 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.tv_monitor: // 监测调查
+                MorePopWindow monitorPopup = new MorePopWindow(this, R.layout.popup_monitor);
+                monitorPopup.showPopupWindow(monitorPopup, personCenter);
+
+                View tv_point = monitorPopup.getContentView().findViewById(R.id.tv_point);
+                tv_point.setOnClickListener(this);
+
+                View tv_group = monitorPopup.getContentView().findViewById(R.id.tv_group);
+                tv_group.setOnClickListener(this);
+
+                View tv_survey = monitorPopup.getContentView().findViewById(R.id.tv_survey);
+                tv_survey.setOnClickListener(this);
+                break;
+            case R.id.tv_point:
+                MonitorDialog monitorDialog = new MonitorDialog(mContext, R.style.Dialog);
+                BussUtil.setDialogParams(mContext, monitorDialog, 0.5, 0.8);
+                break;
+            case R.id.tv_group:
+                GroupDialog groupDialog = new GroupDialog(mContext, R.style.Dialog);
+                BussUtil.setDialogParams(mContext, groupDialog, 0.5, 0.8);
+                break;
+            case R.id.tv_survey:
+                surveyDialog = new SurveyDialog(BaseActivity.this, R.style.Dialog, this);
+                WindowManager.LayoutParams params = BussUtil.setDialogParams(mContext, surveyDialog, 0.5, 1.0);
+                surveyDialog.setDialogParams(params);
+                break;
+
             case R.id.share_sbsj:
                 //事件上报
                 showSbsjDialog();
@@ -1835,6 +1882,22 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
                             R.style.Dialog, picturePath, currentPoint);
                     dialog.show();
                     personCenterPopup.dismiss();
+                }
+                break;
+
+            case PICK_PHOTO_AREA:
+                if (data != null){
+                    picListArea.clear();
+                    picListArea = data.getStringArrayListExtra(PhotoPickerActivity.KEY_RESULT);
+                    surveyDialog.loadPhoto(PICK_PHOTO_AREA);
+                }
+                break;
+
+            case PICK_PHOTO_EMP:
+                if (data != null){
+                    picListEmp.clear();
+                    picListEmp = data.getStringArrayListExtra(PhotoPickerActivity.KEY_RESULT);
+                    surveyDialog.loadPhoto(PICK_PHOTO_EMP);
                 }
                 break;
             default:
@@ -2402,7 +2465,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
      */
     public void showZbdwDialog() {
         CoordinateDialog coordinateDialog = new CoordinateDialog(mContext, R.style.Dialog, this,basePresenter);
-        BussUtil.setDialogParams(mContext, coordinateDialog, 0.6, 1);
+        BussUtil.setDialogParams(mContext, coordinateDialog, 0.6, 0.9);
     }
 
     /**
@@ -3672,8 +3735,20 @@ public abstract class BaseActivity extends AppCompatActivity implements LayerSel
     }
 
     @Override
-    public ArrayList<String> getPicList() {
-        return picList;
+    public ArrayList<String> getPicList(int TYPE) {
+        ArrayList<String> list = new ArrayList<>();
+        switch (TYPE) {
+            case PICK_PHOTO:
+                list = picList;
+                break;
+            case PICK_PHOTO_AREA:
+                list = picListArea;
+                break;
+            case PICK_PHOTO_EMP:
+                list = picListEmp;
+                break;
+        }
+        return list;
     }
 
     @Override

@@ -71,6 +71,7 @@
             android:background="@drawable/background_view_rounded"
             android:padding="@dimen/padding_10"
             android:text="@string/versioncheck"
+            android:visibility="gone"
             android:textColor="@color/blue"/>
 
         <View

@@ -64,7 +64,8 @@ public class UnreportedDialog extends Dialog {
     /*发送数据*/
     private void senInofToServer(String json) {
         ProgressDialogUtil.startProgressDialog(mContext);
-        Observable<String> oberver = RetrofitHelper.getInstance(mContext).getServer().upRequisitionInfo(json);
+//        Observable<String> oberver = RetrofitHelper.getInstance(mContext).getServer().upRequisitionInfo(json);
+        Observable<String> oberver = RetrofitHelper.getInstance(mContext).getServer().upPatrolInfo(json);
         oberver.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<String>() {

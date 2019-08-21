@@ -321,6 +321,9 @@ public class ResourcesManager implements Serializable {
 		File[] files = new File(path).listFiles();
 		List<File> groups = new ArrayList<>();
 
+		if (files == null) {
+			return groups;
+		}
 		int files_lenght = files.length;
 		if(files_lenght == 0){
 			return new ArrayList<>();

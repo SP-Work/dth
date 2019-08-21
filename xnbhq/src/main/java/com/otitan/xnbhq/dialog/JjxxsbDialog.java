@@ -68,7 +68,7 @@ public class JjxxsbDialog extends Dialog implements Recyc_imageAdapter.PicOnclic
         JjxxsbDialog.dialogParams = dialogParams;
     }
 
-    public static WindowManager.LayoutParams dialogParams;
+    private static WindowManager.LayoutParams dialogParams;
 
     public JjxxsbDialog(@NonNull BaseActivity context, @StyleRes int themeResId,IPicView baseView) {
         super(context, themeResId);
@@ -149,7 +149,7 @@ public class JjxxsbDialog extends Dialog implements Recyc_imageAdapter.PicOnclic
                     return;
                 }
                 Gson gson = new Gson();
-                for(String pic : picView.getPicList()){
+                for(String pic : picView.getPicList(mContext.PICK_PHOTO)){
                     String base = Util.picToString(pic);
                     Image image = new Image();
                     image.setBase(base);
@@ -171,13 +171,15 @@ public class JjxxsbDialog extends Dialog implements Recyc_imageAdapter.PicOnclic
     /*发送数据*/
     private void senInofToServer(String json) {
         ProgressDialogUtil.startProgressDialog(mContext);
-        Observable<String> oberver = RetrofitHelper.getInstance(mContext).getServer().upRequisitionInfo(json);
+//        Observable<String> oberver = RetrofitHelper.getInstance(mContext).getServer().upRequisitionInfo(json);
+        Observable<String> oberver = RetrofitHelper.getInstance(mContext).getServer().upPatrolInfo(json);
         oberver.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<String>() {
                     @Override
                     public void onCompleted() {
                         dialog.dismiss();
+                        picView.getPicList(mContext.PICK_PHOTO).clear();
                     }
 
                     @Override
@@ -187,7 +189,7 @@ public class JjxxsbDialog extends Dialog implements Recyc_imageAdapter.PicOnclic
 
                     @Override
                     public void onNext(String s) {
-                        dialog.dismiss();
+//                        dialog.dismiss();
                         ProgressDialogUtil.stopProgressDialog(mContext);
                         if(s.equals("true")){
                             ToastUtil.setToast(mContext, "上报成功");
@@ -201,7 +203,7 @@ public class JjxxsbDialog extends Dialog implements Recyc_imageAdapter.PicOnclic
     @Override
     public void setPicOnclick(View item, int position) {
         Intent intent = new Intent(mContext,ImageBrowseActivity.class);
-        intent.putStringArrayListExtra("images",picView.getPicList());
+        intent.putStringArrayListExtra("images",picView.getPicList(mContext.PICK_PHOTO));
         intent.putExtra("position",position);
         mContext.startActivity(intent);
     }
@@ -209,8 +211,8 @@ public class JjxxsbDialog extends Dialog implements Recyc_imageAdapter.PicOnclic
     /**
      * 跳转到选择图片界面
      */
-    public void toSelectPic() {
-        if (picView.getPicList().size() != 0 && picView.getPicList().size() != 9) {
+    private void toSelectPic() {
+        if (picView.getPicList(mContext.PICK_PHOTO).size() != 0 && picView.getPicList(mContext.PICK_PHOTO).size() != 9) {
             AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
             builder.setTitle("重新选择会覆盖之前的图片");
             builder.setMessage("是否重新选择");
@@ -234,11 +236,11 @@ public class JjxxsbDialog extends Dialog implements Recyc_imageAdapter.PicOnclic
             dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextSize(16);
             dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextSize(16);
         }
-        if (picView.getPicList().size() == 9) {
+        if (picView.getPicList(mContext.PICK_PHOTO).size() == 9) {
             ToastUtil.setToast(mContext, "照片最多只能选择9张");
             return;
         }
-        if (picView.getPicList().size() == 0) {
+        if (picView.getPicList(mContext.PICK_PHOTO).size() == 0) {
             Intent intent = new Intent(mContext, PhotoPickerActivity.class);
             intent.putExtra(PhotoPickerActivity.EXTRA_SHOW_CAMERA, true);//是否显示相机
             intent.putExtra(PhotoPickerActivity.EXTRA_SELECT_MODE, PhotoPickerActivity.MODE_MULTI);//选择模式（默认多选模式）
@@ -253,7 +255,7 @@ public class JjxxsbDialog extends Dialog implements Recyc_imageAdapter.PicOnclic
         LinearLayoutManager layoutManager = new LinearLayoutManager(mContext);
         layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         recyc.setLayoutManager(layoutManager);
-        Recyc_imageAdapter adapter = new Recyc_imageAdapter(mContext, picView.getPicList(), dialogParams.width/4);
+        Recyc_imageAdapter adapter = new Recyc_imageAdapter(mContext, picView.getPicList(mContext.PICK_PHOTO), dialogParams.width/4);
         recyc.setAdapter(adapter);
         adapter.setPicOnclick(dialog);
     }

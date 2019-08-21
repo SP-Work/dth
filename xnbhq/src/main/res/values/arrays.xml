@@ -474,4 +474,11 @@
         <item>扎佐林场</item>
         <item>林科院实验林场</item>
     </string-array>
+
+    <string-array name="dth">
+        <item>东洞庭湖</item>
+        <item>西洞庭湖</item>
+        <item>南洞庭湖</item>
+        <item>横岭湖</item>
+    </string-array>
 </resources>

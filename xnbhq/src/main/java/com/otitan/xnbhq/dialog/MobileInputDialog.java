@@ -87,7 +87,9 @@ public class MobileInputDialog extends Dialog {
                     return;
                 }
 
-                sendDataToServer(nameTxt.getText().toString(), telTxt.getText().toString(),
+                /*sendDataToServer(nameTxt.getText().toString(), telTxt.getText().toString(),
+                        addressTxt.getText().toString(),sb_nameTxt.getText().toString(),MyApplication.macAddress);*/
+                sendDataToServer_dth(nameTxt.getText().toString(), telTxt.getText().toString(),
                         addressTxt.getText().toString(),sb_nameTxt.getText().toString(),MyApplication.macAddress);
 
 //                String resl = webservice.addMobileSysInfo(nameTxt.getText().toString(), telTxt.getText().toString(),
@@ -127,6 +129,35 @@ public class MobileInputDialog extends Dialog {
                             MyApplication.sharedPreferences.edit().putBoolean(MyApplication.macAddress, true).apply();
                             ToastUtil.setToast(mContext, "用户信息录入成功");
                             MobileInputDialog.this.dismiss();
+                        }
+                    }
+                });
+    }
+
+    /**发送数据到后台*/
+    private void sendDataToServer_dth(String sysname, String tel, String dw, String sbmc, String sbh) {
+        Observable<String> observable = RetrofitHelper.getInstance(mContext).getServer().addDeviceInfo(sysname,tel,dw,sbmc,sbh);
+        observable.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<String>() {
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        ToastUtil.setToast(mContext,"录入信息失败" + e.getMessage());
+                    }
+
+                    @Override
+                    public void onNext(String s) {
+                        String[] split = s.split(",");
+                        if (split[0].contains("1")) {
+                            MyApplication.sharedPreferences.edit().putBoolean(MyApplication.macAddress, true).apply();
+                            ToastUtil.setToast(mContext, "用户信息录入成功");
+                            MobileInputDialog.this.dismiss();
+                        } else {
+                            ToastUtil.setToast(mContext, "录入失败，请检查用户信息");
                         }
                     }
                 });

@@ -6,6 +6,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
         android:orientation="vertical">
 
         <FrameLayout
@@ -44,7 +46,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:gravity="center"
+                android:gravity="end"
                 android:minWidth="@dimen/width_90"
                 android:padding="@dimen/padding_7"
                 android:text="事件名称："
@@ -54,7 +56,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:text="*"
+                android:text="* "
                 android:textColor="@color/red" />
 
             <EditText
@@ -62,6 +64,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center|left"
+                android:padding="3dp"
                 android:background="@drawable/background_edittxt"
                 android:textCursorDrawable="@drawable/color_cursor" />
 
@@ -78,7 +81,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:gravity="center"
+                android:gravity="end"
                 android:minWidth="@dimen/width_90"
                 android:padding="@dimen/padding_7"
                 android:text="事件描述："
@@ -88,7 +91,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:text="*"
+                android:text="* "
                 android:textColor="@color/red" />
 
             <EditText
@@ -96,6 +99,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center|left"
+                android:padding="3dp"
                 android:background="@drawable/background_edittxt"
                 android:textCursorDrawable="@drawable/color_cursor" />
 
@@ -112,7 +116,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:gravity="center"
+                android:gravity="end"
                 android:minWidth="@dimen/width_90"
                 android:padding="@dimen/padding_7"
                 android:text="经度："
@@ -122,7 +126,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:text="*"
+                android:text="* "
                 android:textColor="@color/red" />
 
             <TextView
@@ -130,6 +134,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center|left"
+                android:padding="3dp"
                 android:background="@drawable/background_edittxt"
                 android:textCursorDrawable="@drawable/color_cursor" />
 
@@ -147,7 +152,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:gravity="center"
+                android:gravity="end"
                 android:minWidth="@dimen/width_90"
                 android:padding="@dimen/padding_7"
                 android:text="纬度："
@@ -157,7 +162,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:text="*"
+                android:text="* "
                 android:textColor="@color/red" />
 
             <TextView
@@ -165,6 +170,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center|left"
+                android:padding="3dp"
                 android:background="@drawable/background_edittxt"
                 android:textCursorDrawable="@drawable/color_cursor" />
 
@@ -200,6 +206,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center|left"
+                android:padding="3dp"
                 android:background="@drawable/background_edittxt"
                 android:textCursorDrawable="@drawable/color_cursor" />
 
@@ -241,25 +248,26 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="*"
-                android:visibility="invisible"
-                android:textColor="@color/red" />
+                android:gravity="end"
+                android:minWidth="@dimen/width_90"
+                android:padding="@dimen/padding_7"
+                android:text="备注："
+                android:textColor="@color/color_black" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:minWidth="@dimen/width_90"
-                android:padding="@dimen/padding_7"
-                android:text="备注："
-                android:textColor="@color/color_black" />
+                android:text="* "
+                android:visibility="invisible"
+                android:textColor="@color/red" />
 
             <EditText
                 android:id="@+id/txt_beizhu"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center|left"
+                android:padding="3dp"
                 android:background="@drawable/background_edittxt"
                 android:textCursorDrawable="@drawable/color_cursor" />
 

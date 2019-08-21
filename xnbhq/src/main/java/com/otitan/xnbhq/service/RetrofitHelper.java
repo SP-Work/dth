@@ -27,6 +27,7 @@ public class RetrofitHelper {
     public static NetworkMonitor networkMonitor;
     static RetrofitHelper instance = null;
     private Retrofit mRetrofit = null;
+    private Retrofit mRetrofits = null;
 
     public static RetrofitHelper getInstance(Context context){
         if(instance == null){
@@ -61,7 +62,16 @@ public class RetrofitHelper {
         okHttpClientBuilder.connectTimeout(5, TimeUnit.SECONDS);
 
         mRetrofit = new Retrofit.Builder()
-                .baseUrl(mContext.getResources().getString(R.string.serverhost))
+//                .baseUrl(mContext.getResources().getString(R.string.serverhost))
+                .baseUrl(mContext.getResources().getString(R.string.serverhost_dth))
+                .client(okHttpClientBuilder.build())
+                .addConverterFactory(SimpleXmlConverterFactory.create())
+                //.addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .build();
+
+        mRetrofits = new Retrofit.Builder()
+                .baseUrl(mContext.getResources().getString(R.string.serverhost_dths))
                 .client(okHttpClientBuilder.build())
                 .addConverterFactory(SimpleXmlConverterFactory.create())
                 //.addConverterFactory(GsonConverterFactory.create())
@@ -71,6 +81,10 @@ public class RetrofitHelper {
 
     public RetrofitService getServer(){
         return mRetrofit.create(RetrofitService.class);
+    }
+
+    public RetrofitService getServers(){
+        return mRetrofits.create(RetrofitService.class);
     }
 
     private class MyNetworkInterceptor implements Interceptor
